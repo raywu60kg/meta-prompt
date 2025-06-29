@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Prompt Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-lg">
+        <h1 class="text-2xl font-bold mb-6 text-center">System Prompt Generator</h1>
+        <form method="post" action="/generate" class="space-y-4" id="promptForm">
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1" for="purpose">Purpose</label>
+                <input type="text" id="purpose" name="purpose" required class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" value="{{ purpose if purpose else '' }}">
+            </div>
+            <div>
+                <label class="block text-gray-700 font-semibold mb-1">Examples</label>
+                <div id="examples-list">
+                    {% for ex in examples %}
+                    <div class="flex space-x-2 mb-2 example-row">
+                        <input type="text" name="example_input" placeholder="Input" required class="flex-1 border border-gray-300 rounded px-3 py-2" value="{{ ex.input }}">
+                        <input type="text" name="example_output" placeholder="Output" required class="flex-1 border border-gray-300 rounded px-3 py-2" value="{{ ex.output }}">
+                        <button type="button" class="remove-example bg-red-500 text-white px-2 rounded">&minus;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" id="add-example" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">+ Add Example</button>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 font-semibold">Generate Prompt</button>
+        </form>
+        {% if output %}
+        <div class="mt-6">
+            <h2 class="text-lg font-bold mb-2">Generated System Prompt</h2>
+            <pre class="bg-gray-100 p-4 rounded text-sm whitespace-pre-wrap">{{ output }}</pre>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        document.getElementById('add-example').addEventListener('click', function() {
+            const row = document.createElement('div');
+            row.className = 'flex space-x-2 mb-2 example-row';
+            row.innerHTML = `
+                <input type="text" name="example_input" placeholder="Input" required class="flex-1 border border-gray-300 rounded px-3 py-2">
+                <input type="text" name="example_output" placeholder="Output" required class="flex-1 border border-gray-300 rounded px-3 py-2">
+                <button type="button" class="remove-example bg-red-500 text-white px-2 rounded">&minus;</button>
+            `;
+            document.getElementById('examples-list').appendChild(row);
+        });
+        document.getElementById('examples-list').addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-example')) {
+                const rows = document.querySelectorAll('.example-row');
+                if (rows.length > 1) {
+                    e.target.parentElement.remove();
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
