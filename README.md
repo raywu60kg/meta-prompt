@@ -7,7 +7,7 @@ A simple UI tool to generate system prompts for multiclass classification using 
 1. Install dependencies:
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
 
 2. Run the app:

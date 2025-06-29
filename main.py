@@ -29,6 +29,17 @@ async def generate_prompt(request: Request,
     prompt = await build_system_prompt(purpose, examples)
     return templates.TemplateResponse("index.html", {"request": request, "output": prompt, "purpose": purpose, "examples": examples})
 
+@app.get("/example/email", response_class=HTMLResponse)
+def email_example(request: Request):
+    purpose = "Classify emails as 'spam' or 'not spam'. Output 'spam' for unwanted emails and 'not spam' for legitimate emails."
+    examples = [
+        {"input": "Congratulations! You've won a $1000 gift card. Click here to claim.", "output": "spam"},
+        {"input": "Dear team, please find attached the minutes from today's meeting.", "output": "not spam"},
+        {"input": "Limited time offer! Buy now and save 50%.", "output": "spam"},
+        {"input": "Your Amazon order has shipped.", "output": "not spam"}
+    ]
+    return templates.TemplateResponse("index.html", {"request": request, "output": None, "purpose": purpose, "examples": examples})
+
 async def build_system_prompt(purpose: str, examples: List[dict]) -> str:
     example_text = '\n'.join([
         f"Input: {ex['input']}\nOutput: {ex['output']}" for ex in examples if ex['input'] or ex['output']
